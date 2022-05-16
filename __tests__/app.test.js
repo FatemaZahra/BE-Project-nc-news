@@ -18,7 +18,6 @@ describe("/api/topics", () => {
       .then(({ body }) => {
         // console.log(body, "<<<body");
         const { topics } = body;
-        expect(body).toBeInstanceOf(Object);
         expect(topics).toHaveLength(3);
         expect(topics).toBeInstanceOf(Array);
         topics.forEach((topic) => {
@@ -51,7 +50,7 @@ describe("GET /api/articles/:article_id", () => {
         expect(article).toMatchObject({
           author: expect.any(String),
           title: expect.any(String),
-          article_id: expect.any(Number),
+          article_id: 5,
           body: expect.any(String),
           topic: expect.any(String),
           created_at: expect.any(String),
