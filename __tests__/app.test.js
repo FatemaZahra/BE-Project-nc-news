@@ -4,6 +4,7 @@ const testData = require("../db/data/test-data/index.js");
 const db = require("../db/connection.js");
 const app = require("../app.js");
 const request = require("supertest");
+const { convertTimestampToDate } = require("../db/helpers/utils.js");
 
 afterAll(() => db.end());
 
@@ -19,6 +20,7 @@ describe("/api/topics", () => {
         const { topics } = body;
         expect(body).toBeInstanceOf(Object);
         expect(topics).toHaveLength(3);
+        expect(topics).toBeInstanceOf(Array);
         topics.forEach((topic) => {
           expect(topic).toMatchObject({
             slug: expect.any(String),
@@ -33,6 +35,47 @@ describe("/api/topics", () => {
       .expect(404)
       .then((response) => {
         response.body = { msg: "Path not found" };
+      });
+  });
+});
+describe("GET /api/articles/:article_id", () => {
+  test("200: Responds with an article object with the required properties.", () => {
+    const article_id = 5;
+    return request(app)
+      .get(`/api/articles/${article_id}`)
+      .expect(200)
+      .then(({ body }) => {
+        // console.log(body, "<<<body");
+        const { article } = body;
+        expect(article).toBeInstanceOf(Object);
+        expect(article).toMatchObject({
+          author: expect.any(String),
+          title: expect.any(String),
+          article_id: expect.any(Number),
+          body: expect.any(String),
+          topic: expect.any(String),
+          created_at: expect.any(String),
+          votes: expect.any(Number),
+        });
+      });
+  });
+  test("400: End-point with invalid data type", () => {
+    return request(app)
+      .get("/api/articles/I_am_an_article")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid ID" });
+      });
+  });
+  test("404: Not-found, ID doesn't exist", () => {
+    const id = 9999999;
+    return request(app)
+      .get(`/api/articles/${id}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: `Article with ${id} ID doesn't exist`,
+        });
       });
   });
 });
