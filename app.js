@@ -8,7 +8,7 @@ const app = express();
 app.get("/api/topics", getTopics);
 
 app.use("/*", (req, res, next) => {
-  res.status(400).send({ msg: "Path not found" });
+  res.status(404).send({ msg: "Path not found" });
 });
 
 app.use((err, req, res, next) => {

@@ -30,7 +30,7 @@ describe("/api/topics", () => {
   test("404: Path not found", () => {
     return request(app)
       .get("/api/something")
-      .expect(400)
+      .expect(404)
       .then((response) => {
         response.body = { msg: "Path not found" };
       });
