@@ -58,6 +58,16 @@ describe("GET /api/articles/:article_id", () => {
         });
       });
   });
+  test("200:Responds with an article object which has the key of comment count", () => {
+    const article_id = 5;
+    return request(app)
+      .get(`/api/articles/${article_id}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.comment_count).toBe(2);
+      });
+  });
   test("400: End-point with invalid data type", () => {
     return request(app)
       .get("/api/articles/I_am_an_article")
