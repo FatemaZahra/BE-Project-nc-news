@@ -4,7 +4,6 @@ const testData = require("../db/data/test-data/index.js");
 const db = require("../db/connection.js");
 const app = require("../app.js");
 const request = require("supertest");
-const { convertTimestampToDate } = require("../db/helpers/utils.js");
 
 afterAll(() => db.end());
 
@@ -44,7 +43,6 @@ describe("GET /api/articles/:article_id", () => {
       .get(`/api/articles/${article_id}`)
       .expect(200)
       .then(({ body }) => {
-        // console.log(body, "<<<body");
         const { article } = body;
         expect(article).toBeInstanceOf(Object);
         expect(article).toMatchObject({
@@ -56,6 +54,26 @@ describe("GET /api/articles/:article_id", () => {
           created_at: expect.any(String),
           votes: expect.any(Number),
         });
+      });
+  });
+  test("200:Responds with an article object which has the key of comment count", () => {
+    const article_id = 5;
+    return request(app)
+      .get(`/api/articles/${article_id}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.comment_count).toBe(2);
+      });
+  });
+  test("200:Responds with an article object with comment count as 0 when the article has 0 comments", () => {
+    const article_id = 2;
+    return request(app)
+      .get(`/api/articles/${article_id}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.comment_count).toBe(0);
       });
   });
   test("400: End-point with invalid data type", () => {
