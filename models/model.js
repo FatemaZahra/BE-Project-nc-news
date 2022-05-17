@@ -33,7 +33,6 @@ exports.fetchArticleWithUpdatedVotes = (id, obj) => {
       let votesChange = votes + obj.inc_votes;
 
       return db.query(queryStr, [id, votesChange]).then((result) => {
-        console.log(result.rows, "<<<rows");
         return result.rows[0];
       });
     });

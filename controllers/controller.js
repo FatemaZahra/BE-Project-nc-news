@@ -23,7 +23,7 @@ exports.getOneArticle = (req, res, next) => {
 exports.updateArticleWithVotes = (req, res, next) => {
   const { article_id } = req.params;
   const parsedArticleId = parseInt(article_id);
-  console.log(req.body);
+
   fetchArticleWithUpdatedVotes(parsedArticleId, req.body)
     .then((article) => {
       res.status(200).send({ article });
