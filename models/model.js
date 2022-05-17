@@ -22,18 +22,24 @@ exports.fetchOneArticle = (id) => {
 };
 
 exports.fetchArticleWithUpdatedVotes = (id, obj) => {
-  let getQuery = `Select votes FROM articles WHERE article_id = $1`;
-  return db
-    .query(getQuery, [id])
-    .then((result) => {
-      return result.rows[0].votes;
-    })
-    .then((votes) => {
-      let queryStr = `UPDATE articles SET votes = $2 WHERE article_id = $1 RETURNING *`;
-      let votesChange = votes + obj.inc_votes;
+  const { inc_votes } = obj;
 
-      return db.query(queryStr, [id, votesChange]).then((result) => {
-        return result.rows[0];
-      });
+  let queryStr = `UPDATE articles SET votes = votes+ $2 WHERE article_id = $1 RETURNING *`;
+
+  if (!inc_votes) {
+    return Promise.reject({
+      status: 400,
+      msg: "Missing required fields",
     });
+  }
+
+  return db.query(queryStr, [id, inc_votes]).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: `Article with ${id} ID doesn't exist`,
+      });
+    }
+    return result.rows[0];
+  });
 };

@@ -119,14 +119,14 @@ describe("PATCH /api/articles/:article_id", () => {
       .send(incrementObj)
       .expect(400)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "Bad Request" });
+        expect(body).toEqual({ msg: "Missing required fields" });
       });
   });
   test("404: Not-found, ID doesn't exist", () => {
     const id = 9999999;
     const incrementObj = { inc_votes: 10 };
     return request(app)
-      .get(`/api/articles/${id}`)
+      .patch(`/api/articles/${id}`)
       .send(incrementObj)
       .expect(404)
       .then(({ body }) => {
