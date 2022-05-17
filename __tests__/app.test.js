@@ -147,6 +147,8 @@ describe("GET /api/users", () => {
         expect(users).toBeInstanceOf(Array);
         expect(users).toHaveLength(4);
         users.forEach((user) => {
+          expect(user.name).toBeUndefined();
+          expect(user.avatar_url).toBeUndefined();
           expect(user).toMatchObject({
             username: expect.any(String),
           });
