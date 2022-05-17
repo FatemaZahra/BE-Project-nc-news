@@ -1,9 +1,15 @@
 const express = require("express");
+//Topics and Article Controller
 const {
   getTopics,
   getOneArticle,
   updateArticleWithVotes,
 } = require("./controllers/controller.js");
+
+//User Controller
+const { getUserByUsername } = require("./controllers/users.controller.js");
+
+//Error Controller
 const {
   handlePSQLErrors,
   handleCustomErrors,
@@ -13,13 +19,19 @@ const {
 const app = express();
 app.use(express.json());
 
-//GET
-
+//TOPICS
+//get
 app.get("/api/topics", getTopics);
-app.get("/api/articles/:article_id", getOneArticle);
 
-//PATCH
+//ARTICLES
+//get
+app.get("/api/articles/:article_id", getOneArticle);
+//Patch
 app.patch("/api/articles/:article_id", updateArticleWithVotes);
+
+//USERS
+//get
+app.get("/api/users", getUserByUsername);
 
 //ERROR HANDLING
 app.use("/*", (req, res, next) => {
