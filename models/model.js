@@ -20,3 +20,21 @@ exports.fetchOneArticle = (id) => {
     return article.rows[0];
   });
 };
+
+exports.fetchArticleWithUpdatedVotes = (id, obj) => {
+  let getQuery = `Select votes FROM articles WHERE article_id = $1`;
+  return db
+    .query(getQuery, [id])
+    .then((result) => {
+      return result.rows[0].votes;
+    })
+    .then((votes) => {
+      let queryStr = `UPDATE articles SET votes = $2 WHERE article_id = $1 RETURNING *`;
+      let votesChange = votes + obj.inc_votes;
+
+      return db.query(queryStr, [id, votesChange]).then((result) => {
+        console.log(result.rows, "<<<rows");
+        return result.rows[0];
+      });
+    });
+};

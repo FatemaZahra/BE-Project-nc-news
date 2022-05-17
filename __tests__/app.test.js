@@ -63,7 +63,7 @@ describe("GET /api/articles/:article_id", () => {
       .get("/api/articles/I_am_an_article")
       .expect(400)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "Invalid ID" });
+        expect(body).toEqual({ msg: "Bad Request" });
       });
   });
   test("404: Not-found, ID doesn't exist", () => {
@@ -75,6 +75,51 @@ describe("GET /api/articles/:article_id", () => {
         expect(body).toEqual({
           msg: `Article with ${id} ID doesn't exist`,
         });
+      });
+  });
+});
+
+describe("PATCH /api/articles/:article_id", () => {
+  test("200: Responds with the article incremented by newVotes count", () => {
+    const incrementObj = { inc_votes: 10 };
+    return request(app)
+      .patch("/api/articles/2")
+      .send(incrementObj)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.votes).toBe(10);
+      });
+  });
+  test("200: Responds with the article decremented by newVotes count", () => {
+    const decrementObj = { inc_votes: -10 };
+    return request(app)
+      .patch("/api/articles/1")
+      .send(decrementObj)
+      .expect(200)
+      .then(({ body }) => {
+        const { article } = body;
+        expect(article.votes).toBe(90);
+      });
+  });
+  test("400: Responds with a bad request when incorrect data type  is passed in the obj", () => {
+    const incrementObj = { inc_votes: "increase_by_10" };
+    return request(app)
+      .patch("/api/articles/3")
+      .send(incrementObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad Request" });
+      });
+  });
+  test("400: Responds with a bad request when the required fields are missing", () => {
+    const incrementObj = {};
+    return request(app)
+      .patch("/api/articles/3")
+      .send(incrementObj)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad Request" });
       });
   });
 });
