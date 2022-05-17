@@ -136,3 +136,31 @@ describe("PATCH /api/articles/:article_id", () => {
       });
   });
 });
+
+describe("GET /api/users", () => {
+  test("200: Returns an array of objects with the property username", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        const { users } = body;
+        expect(users).toBeInstanceOf(Array);
+        expect(users).toHaveLength(4);
+        users.forEach((user) => {
+          expect(user.name).toBeUndefined();
+          expect(user.avatar_url).toBeUndefined();
+          expect(user).toMatchObject({
+            username: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: Path not found", () => {
+    return request(app)
+      .get("/api/something")
+      .expect(404)
+      .then((response) => {
+        response.body = { msg: "Path not found" };
+      });
+  });
+});
