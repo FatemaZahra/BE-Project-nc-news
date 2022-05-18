@@ -1,5 +1,7 @@
 const db = require("../db/connection.js");
 const devData = require("../db/data/development-data/index");
+// const { convertTimestampToDate } = require("../db/helpers/utils");
+// const format = require("pg-format");
 
 exports.fetchTopics = () => {
   let queryStr = "SELECT * FROM topics";
@@ -43,5 +45,14 @@ exports.fetchArticleWithUpdatedVotes = (id, obj) => {
       });
     }
     return result.rows[0];
+  });
+};
+
+exports.fetchArticlesSortedByDate = (order) => {
+  let queryStr =
+    "SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
+
+  return db.query(queryStr).then((article) => {
+    return article.rows;
   });
 };

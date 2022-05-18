@@ -4,6 +4,7 @@ const {
   getTopics,
   getOneArticle,
   updateArticleWithVotes,
+  getArticlesSortedByDate,
 } = require("./controllers/controller.js");
 
 //User Controller
@@ -25,6 +26,7 @@ app.get("/api/topics", getTopics);
 
 //ARTICLES
 //get
+app.get("/api/articles", getArticlesSortedByDate);
 app.get("/api/articles/:article_id", getOneArticle);
 //Patch
 app.patch("/api/articles/:article_id", updateArticleWithVotes);
