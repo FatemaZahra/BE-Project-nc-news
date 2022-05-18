@@ -4,6 +4,7 @@ const testData = require("../db/data/test-data/index.js");
 const db = require("../db/connection.js");
 const app = require("../app.js");
 const request = require("supertest");
+const sorted = require("jest-sorted");
 
 afterAll(() => db.end());
 
@@ -169,6 +170,40 @@ describe("GET /api/users", () => {
           expect(user.avatar_url).toBeUndefined();
           expect(user).toMatchObject({
             username: expect.any(String),
+          });
+        });
+      });
+  });
+  test("404: Path not found", () => {
+    return request(app)
+      .get("/api/something")
+      .expect(404)
+      .then((response) => {
+        response.body = { msg: "Path not found" };
+      });
+  });
+});
+describe("GET /api/articles", () => {
+  test("200:Returns an array of article objects sorted by date in descending order", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        articles.forEach((article) => {
+          expect(article).toMatchObject({
+            article_id: expect.any(Number),
+            title: expect.any(String),
+            topic: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            created_at: expect.any(String),
+            votes: expect.any(Number),
+            comment_count: expect.any(Number),
+          });
+          expect(articles).toBeSortedBy("created_at", {
+            descending: true,
           });
         });
       });

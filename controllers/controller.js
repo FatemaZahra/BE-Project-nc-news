@@ -2,6 +2,8 @@ const {
   fetchTopics,
   fetchOneArticle,
   fetchArticleWithUpdatedVotes,
+
+  fetchArticlesSortedByDate,
 } = require("../models/model.js");
 
 exports.getTopics = (req, res) => {
@@ -28,4 +30,10 @@ exports.updateArticleWithVotes = (req, res, next) => {
       res.status(200).send({ article });
     })
     .catch(next);
+};
+
+exports.getArticlesSortedByDate = (req, res) => {
+  fetchArticlesSortedByDate().then((articles) => {
+    res.status(200).send({ articles });
+  });
 };
