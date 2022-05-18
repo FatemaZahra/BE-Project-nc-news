@@ -57,15 +57,20 @@ exports.fetchArticlesSortedByDate = (order) => {
   });
 };
 
+exports.checkArticleExists = (article_id) => {
+  const queryStr = "SELECT * FROM articles WHERE article_id = $1;";
+  return db.query(queryStr, [article_id]).then((article) => {
+    if (article.rows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: `Article ID:${article_id} ID doesn't exist`,
+      });
+    }
+    return article.rows[0];
+  });
+};
 exports.fetchArticleComments = (article_id) => {
-  if (article_id > 36) {
-    return Promise.reject({
-      status: 404,
-      msg: `Article ID:${article_id} ID doesn't exist`,
-    });
-  }
-  const queryStr =
-    "SELECT * FROM comments WHERE comments.article_id=$1 AND comments.article_id <> NULL";
+  const queryStr = "SELECT * FROM comments WHERE article_id=$1 ";
   return db.query(queryStr, [article_id]).then((articleComments) => {
     return articleComments.rows;
   });

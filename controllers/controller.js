@@ -4,6 +4,7 @@ const {
   fetchArticleWithUpdatedVotes,
   fetchArticlesSortedByDate,
   fetchArticleComments,
+  checkArticleExists,
 } = require("../models/model.js");
 
 exports.getTopics = (req, res) => {
@@ -40,8 +41,12 @@ exports.getArticlesSortedByDate = (req, res) => {
 
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
-  fetchArticleComments(article_id)
-    .then((comments) => {
+  const promises = [
+    fetchArticleComments(article_id),
+    checkArticleExists(article_id),
+  ];
+  Promise.all(promises)
+    .then(([comments]) => {
       res.status(200).send({ comments });
     })
     .catch(next);
