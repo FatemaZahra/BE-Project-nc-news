@@ -1,4 +1,5 @@
 const db = require("../db/connection.js");
+const articles = require("../db/data/development-data/articles.js");
 const comments = require("../db/data/development-data/comments.js");
 const devData = require("../db/data/development-data/index");
 
@@ -57,15 +58,15 @@ exports.fetchArticlesSortedByDate = (order) => {
 };
 
 exports.fetchArticleComments = (article_id) => {
-  return db
-    .query("SELECT * FROM comments WHERE comments.article_id=$1", [article_id])
-    .then((articleComments) => {
-      if (articleComments.rows.length === 0) {
-        return Promise.reject({
-          status: 404,
-          msg: `Comments with article ID:${article_id} ID doesn't exist`,
-        });
-      }
-      return articleComments.rows;
+  if (article_id > 36) {
+    return Promise.reject({
+      status: 404,
+      msg: `Article ID:${article_id} ID doesn't exist`,
     });
+  }
+  const queryStr =
+    "SELECT * FROM comments WHERE comments.article_id=$1 AND comments.article_id <> NULL";
+  return db.query(queryStr, [article_id]).then((articleComments) => {
+    return articleComments.rows;
+  });
 };

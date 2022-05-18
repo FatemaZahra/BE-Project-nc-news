@@ -238,6 +238,17 @@ describe("GET /api/articles/:article_id/comments", () => {
         });
       });
   });
+  test("200:Responds with an empty array when article ID has 0 comments", () => {
+    const article_id = 2;
+    return request(app)
+      .get(`/api/articles/${article_id}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments.length).toBe(0);
+      });
+  });
   test("400: End-point with invalid data type", () => {
     return request(app)
       .get("/api/articles/I_am_an_article/comments")
@@ -253,7 +264,7 @@ describe("GET /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({
-          msg: `Comments with article ID:${article_id} ID doesn't exist`,
+          msg: `Article ID:${article_id} ID doesn't exist`,
         });
       });
   });
