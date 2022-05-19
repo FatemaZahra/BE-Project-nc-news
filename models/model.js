@@ -3,13 +3,6 @@ const articles = require("../db/data/development-data/articles.js");
 const comments = require("../db/data/development-data/comments.js");
 const devData = require("../db/data/development-data/index");
 
-exports.fetchTopics = () => {
-  let queryStr = "SELECT * FROM topics";
-  return db.query(queryStr).then((res) => {
-    return res.rows;
-  });
-};
-
 exports.fetchOneArticle = (id) => {
   let queryStr =
     "SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id WHERE articles.article_id = $1 GROUP BY articles.article_id";

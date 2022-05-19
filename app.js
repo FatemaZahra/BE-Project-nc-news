@@ -1,7 +1,8 @@
 const express = require("express");
-//Topics and Article Controller
+//Topics Controller
+const { getTopics } = require("./controllers/topic.controller");
+//Article Controller
 const {
-  getTopics,
   getOneArticle,
   updateArticleWithVotes,
   getArticlesSortedByDate,
