@@ -267,7 +267,6 @@ describe("GET /api/articles/:article_id/comments", () => {
       .then(({ body }) => {
         expect(body).toEqual({
           msg: `Article ID:${article_id} ID doesn't exist`,
-
         });
       });
   });
@@ -357,8 +356,8 @@ describe("POST /api/articles/:article_id/comments", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({
-          msg: `Article with 9999999 ID doesn't exist`,
-           });
+          msg: `Article ID:${article_id} ID doesn't exist`,
+        });
       });
   });
 });

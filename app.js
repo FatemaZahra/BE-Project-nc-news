@@ -6,9 +6,12 @@ const {
   getOneArticle,
   updateArticleWithVotes,
   getArticlesSortedByDate,
-  postComment
-  getArticleComments,
 } = require("./controllers/controller.js");
+//Comments Controller
+const {
+  postComment,
+  getArticleComments,
+} = require("./controllers/comments.controller");
 
 //User Controller
 const { getUserByUsername } = require("./controllers/users.controller.js");
@@ -33,12 +36,11 @@ app.get("/api/articles", getArticlesSortedByDate);
 app.get("/api/articles/:article_id", getOneArticle);
 //Patch
 app.patch("/api/articles/:article_id", updateArticleWithVotes);
-//getComments
+//COMMENTS
+//get
 app.get("/api/articles/:article_id/comments", getArticleComments);
-//PostComment
+//Post
 app.post("/api/articles/:article_id/comments", postComment);
-
-
 
 //USERS
 //get
