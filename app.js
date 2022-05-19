@@ -1,11 +1,13 @@
 const express = require("express");
-//Topics and Article Controller
+//Topics Controller
+const { getTopics } = require("./controllers/topic.controller");
+//Article Controller
 const {
-  getTopics,
   getOneArticle,
   updateArticleWithVotes,
   getArticlesSortedByDate,
-  postComment,
+  postComment
+  getArticleComments,
 } = require("./controllers/controller.js");
 
 //User Controller
@@ -31,8 +33,12 @@ app.get("/api/articles", getArticlesSortedByDate);
 app.get("/api/articles/:article_id", getOneArticle);
 //Patch
 app.patch("/api/articles/:article_id", updateArticleWithVotes);
+//getComments
+app.get("/api/articles/:article_id/comments", getArticleComments);
 //PostComment
 app.post("/api/articles/:article_id/comments", postComment);
+
+
 
 //USERS
 //get

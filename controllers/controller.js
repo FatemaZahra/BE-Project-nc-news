@@ -1,16 +1,13 @@
 const {
-  fetchTopics,
   fetchOneArticle,
   fetchArticleWithUpdatedVotes,
-  insertComment,
-  fetchArticlesSortedByDate,
-} = require("../models/model.js");
 
-exports.getTopics = (req, res) => {
-  fetchTopics().then((topics) => {
-    res.status(200).send({ topics });
-  });
-};
+  insertComment,
+
+  fetchArticlesSortedByDate,
+  fetchArticleComments,
+  checkArticleExists,
+} = require("../models/model.js");
 
 exports.getOneArticle = (req, res, next) => {
   const { article_id } = req.params;
@@ -37,6 +34,21 @@ exports.getArticlesSortedByDate = (req, res) => {
     res.status(200).send({ articles });
   });
 };
+
+
+exports.getArticleComments = (req, res, next) => {
+  const { article_id } = req.params;
+  const promises = [
+    fetchArticleComments(article_id),
+    checkArticleExists(article_id),
+  ];
+  Promise.all(promises)
+    .then(([comments]) => {
+      res.status(200).send({ comments });
+    })
+    .catch(next);
+};
+
 exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
   const { body } = req;
@@ -47,6 +59,6 @@ exports.postComment = (req, res, next) => {
     })
     .then((comment) => {
       res.status(201).send({ comment });
-    })
+      })
     .catch(next);
 };

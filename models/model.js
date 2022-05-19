@@ -1,14 +1,7 @@
 const db = require("../db/connection.js");
+const articles = require("../db/data/development-data/articles.js");
+const comments = require("../db/data/development-data/comments.js");
 const devData = require("../db/data/development-data/index");
-// const { convertTimestampToDate } = require("../db/helpers/utils");
-// const format = require("pg-format");
-
-exports.fetchTopics = () => {
-  let queryStr = "SELECT * FROM topics";
-  return db.query(queryStr).then((res) => {
-    return res.rows;
-  });
-};
 
 exports.fetchOneArticle = (id) => {
   let queryStr =
@@ -57,6 +50,26 @@ exports.fetchArticlesSortedByDate = () => {
   });
 };
 
+exports.checkArticleExists = (article_id) => {
+  const queryStr = "SELECT * FROM articles WHERE article_id = $1;";
+  return db.query(queryStr, [article_id]).then((article) => {
+    if (article.rows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: `Article ID:${article_id} ID doesn't exist`,
+      });
+    }
+    return article.rows[0];
+  });
+};
+exports.fetchArticleComments = (article_id) => {
+  const queryStr = "SELECT * FROM comments WHERE article_id=$1 ";
+  return db.query(queryStr, [article_id]).then((articleComments) => {
+    return articleComments.rows;
+
+  });
+};
+    
 exports.insertComment = (id, newComment) => {
   const { username, body } = newComment;
   if (username && body) {
@@ -73,4 +86,4 @@ exports.insertComment = (id, newComment) => {
   return db.query(queryStr, [username, body, id]).then(({ rows }) => {
     return rows[0];
   });
-};
+ };
