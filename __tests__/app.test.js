@@ -217,3 +217,56 @@ describe("GET /api/articles", () => {
       });
   });
 });
+describe("GET /api/articles/:article_id/comments", () => {
+  test("200: Responds with an array of comments for the given article ID with mentioned properties", () => {
+    const article_id = 3;
+    return request(app)
+      .get(`/api/articles/${article_id}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments.length).toBe(2);
+        comments.forEach((comment) => {
+          expect(comment).toMatchObject({
+            comment_id: expect.any(Number),
+            votes: expect.any(Number),
+            created_at: expect.any(String),
+            author: expect.any(String),
+            body: expect.any(String),
+            article_id: 3,
+          });
+        });
+      });
+  });
+  test("200:Responds with an empty array when article ID has 0 comments", () => {
+    const article_id = 2;
+    return request(app)
+      .get(`/api/articles/${article_id}/comments`)
+      .expect(200)
+      .then(({ body }) => {
+        const { comments } = body;
+        expect(comments).toBeInstanceOf(Array);
+        expect(comments.length).toBe(0);
+      });
+  });
+  test("400: End-point with invalid data type", () => {
+    return request(app)
+      .get("/api/articles/I_am_an_article/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad Request" });
+      });
+  });
+  test("404: Not-found, ID doesn't exist", () => {
+    const article_id = 9999999;
+    return request(app)
+      .get(`/api/articles/${article_id}/comments`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: `Article ID:${article_id} ID doesn't exist`,
+        });
+      });
+  });
+});

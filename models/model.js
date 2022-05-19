@@ -1,14 +1,7 @@
 const db = require("../db/connection.js");
+const articles = require("../db/data/development-data/articles.js");
+const comments = require("../db/data/development-data/comments.js");
 const devData = require("../db/data/development-data/index");
-// const { convertTimestampToDate } = require("../db/helpers/utils");
-// const format = require("pg-format");
-
-exports.fetchTopics = () => {
-  let queryStr = "SELECT * FROM topics";
-  return db.query(queryStr).then((res) => {
-    return res.rows;
-  });
-};
 
 exports.fetchOneArticle = (id) => {
   let queryStr =
@@ -54,5 +47,24 @@ exports.fetchArticlesSortedByDate = (order) => {
 
   return db.query(queryStr).then((article) => {
     return article.rows;
+  });
+};
+
+exports.checkArticleExists = (article_id) => {
+  const queryStr = "SELECT * FROM articles WHERE article_id = $1;";
+  return db.query(queryStr, [article_id]).then((article) => {
+    if (article.rows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: `Article ID:${article_id} ID doesn't exist`,
+      });
+    }
+    return article.rows[0];
+  });
+};
+exports.fetchArticleComments = (article_id) => {
+  const queryStr = "SELECT * FROM comments WHERE article_id=$1 ";
+  return db.query(queryStr, [article_id]).then((articleComments) => {
+    return articleComments.rows;
   });
 };
