@@ -59,7 +59,14 @@ exports.fetchArticlesSortedByDate = () => {
 
 exports.insertComment = (id, newComment) => {
   const { username, body } = newComment;
-
+  if (username && body) {
+    if (typeof username !== "string" || typeof body !== "string") {
+      return Promise.reject({
+        status: 400,
+        msg: "Invalid type of values",
+      });
+    }
+  }
   queryStr =
     "INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;";
 

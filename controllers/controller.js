@@ -40,7 +40,11 @@ exports.getArticlesSortedByDate = (req, res) => {
 exports.postComment = (req, res, next) => {
   const { article_id } = req.params;
   const { body } = req;
-  insertComment(article_id, body)
+
+  fetchOneArticle(article_id)
+    .then(() => {
+      return insertComment(article_id, body);
+    })
     .then((comment) => {
       res.status(201).send({ comment });
     })

@@ -240,8 +240,13 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
   test("400: End-point with invalid data type", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "That's a lovely article",
+    };
     return request(app)
       .post("/api/articles/I_am_an_article/comments")
+      .send(newComment)
       .expect(400)
       .then(({ body }) => {
         expect(body).toEqual({ msg: "Bad Request" });
@@ -268,10 +273,10 @@ describe("POST /api/articles/:article_id/comments", () => {
       .send(newComment)
       .expect(400)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "Bad Request" });
+        expect(body).toEqual({ msg: "Invalid type of values" });
       });
   });
-  test("400:Responds with a bad request when username doesn't exist", () => {
+  test("404:Responds with a bad request when username doesn't exist", () => {
     const newComment = {
       username: "Fatema",
       body: "That's a lovely article",
@@ -279,12 +284,12 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post("/api/articles/3/comments")
       .send(newComment)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "Bad Request" });
+        expect(body).toEqual({ msg: "Username not found" });
       });
   });
-  test("400: ID doesn't exist-PSQL error", () => {
+  test("404: ID doesn't exist-PSQL error", () => {
     const article_id = 9999999;
     const newComment = {
       username: "butter_bridge",
@@ -293,10 +298,10 @@ describe("POST /api/articles/:article_id/comments", () => {
     return request(app)
       .post(`/api/articles/${article_id}/comments`)
       .send(newComment)
-      .expect(400)
+      .expect(404)
       .then(({ body }) => {
         expect(body).toEqual({
-          msg: `Bad Request`,
+          msg: `Article with 9999999 ID doesn't exist`,
         });
       });
   });
