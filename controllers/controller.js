@@ -1,6 +1,9 @@
 const {
   fetchOneArticle,
   fetchArticleWithUpdatedVotes,
+
+  insertComment,
+
   fetchArticlesSortedByDate,
   fetchArticleComments,
   checkArticleExists,
@@ -32,6 +35,7 @@ exports.getArticlesSortedByDate = (req, res) => {
   });
 };
 
+
 exports.getArticleComments = (req, res, next) => {
   const { article_id } = req.params;
   const promises = [
@@ -42,5 +46,19 @@ exports.getArticleComments = (req, res, next) => {
     .then(([comments]) => {
       res.status(200).send({ comments });
     })
+    .catch(next);
+};
+
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { body } = req;
+
+  fetchOneArticle(article_id)
+    .then(() => {
+      return insertComment(article_id, body);
+    })
+    .then((comment) => {
+      res.status(201).send({ comment });
+      })
     .catch(next);
 };

@@ -41,7 +41,7 @@ exports.fetchArticleWithUpdatedVotes = (id, obj) => {
   });
 };
 
-exports.fetchArticlesSortedByDate = (order) => {
+exports.fetchArticlesSortedByDate = () => {
   let queryStr =
     "SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
 
@@ -66,5 +66,24 @@ exports.fetchArticleComments = (article_id) => {
   const queryStr = "SELECT * FROM comments WHERE article_id=$1 ";
   return db.query(queryStr, [article_id]).then((articleComments) => {
     return articleComments.rows;
+
   });
 };
+    
+exports.insertComment = (id, newComment) => {
+  const { username, body } = newComment;
+  if (username && body) {
+    if (typeof username !== "string" || typeof body !== "string") {
+      return Promise.reject({
+        status: 400,
+        msg: "Invalid type of values",
+      });
+    }
+  }
+  queryStr =
+    "INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;";
+
+  return db.query(queryStr, [username, body, id]).then(({ rows }) => {
+    return rows[0];
+  });
+ };
