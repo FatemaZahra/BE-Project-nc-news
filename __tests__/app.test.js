@@ -217,3 +217,54 @@ describe("GET /api/articles", () => {
       });
   });
 });
+describe("POST /api/articles/:article_id/comments", () => {
+  test("201: Responds with the posted comment that has username and body as its property", () => {
+    const newComment = {
+      username: "butter_bridge",
+      body: "That's a lovely article",
+    };
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(201)
+      .then(({ body }) => {
+        const { comment } = body;
+        expect(comment).toMatchObject({
+          comment_id: 19,
+          author: "butter_bridge",
+          body: "That's a lovely article",
+        });
+      });
+  });
+  test("400: End-point with invalid data type", () => {
+    return request(app)
+      .post("/api/articles/I_am_an_article/comments")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad Request" });
+      });
+  });
+  test("400: Responds with a bad request when the required fields are missing", () => {
+    const newComment = {};
+    return request(app)
+      .post("/api/articles/3/comments")
+      .send(newComment)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Missing required fields" });
+      });
+  });
+  // test("400: Responds with a bad request when incorrect data type is passed in the obj", () => {
+  //   const newComment = {
+  //     username: 1,
+  //     body: 100,
+  //   };
+  //   return request(app)
+  //     .post("/api/articles/3/comments")
+  //     .send(newComment)
+  //     .expect(400)
+  //     .then(({ body }) => {
+  //       expect(body).toEqual({ msg: "Bad Request" });
+  //     });
+  // });
+});

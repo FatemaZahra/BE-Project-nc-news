@@ -5,6 +5,7 @@ const {
   getOneArticle,
   updateArticleWithVotes,
   getArticlesSortedByDate,
+  postComment,
 } = require("./controllers/controller.js");
 
 //User Controller
@@ -30,6 +31,8 @@ app.get("/api/articles", getArticlesSortedByDate);
 app.get("/api/articles/:article_id", getOneArticle);
 //Patch
 app.patch("/api/articles/:article_id", updateArticleWithVotes);
+//PostComment
+app.post("/api/articles/:article_id/comments", postComment);
 
 //USERS
 //get

@@ -2,7 +2,7 @@ const {
   fetchTopics,
   fetchOneArticle,
   fetchArticleWithUpdatedVotes,
-
+  insertComment,
   fetchArticlesSortedByDate,
 } = require("../models/model.js");
 
@@ -36,4 +36,13 @@ exports.getArticlesSortedByDate = (req, res) => {
   fetchArticlesSortedByDate().then((articles) => {
     res.status(200).send({ articles });
   });
+};
+exports.postComment = (req, res, next) => {
+  const { article_id } = req.params;
+  const { body } = req;
+  insertComment(article_id, body)
+    .then((comment) => {
+      res.status(201).send({ comment });
+    })
+    .catch(next);
 };

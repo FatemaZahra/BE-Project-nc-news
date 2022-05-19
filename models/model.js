@@ -56,3 +56,19 @@ exports.fetchArticlesSortedByDate = (order) => {
     return article.rows;
   });
 };
+exports.insertComment = (id, newComment) => {
+  const { username, body } = newComment;
+  if (!username || !body) {
+    return Promise.reject({
+      status: 400,
+      msg: "Missing required fields",
+    });
+  }
+
+  queryStr =
+    "INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;";
+
+  return db.query(queryStr, [username, body, id]).then(({ rows }) => {
+    return rows[0];
+  });
+};
