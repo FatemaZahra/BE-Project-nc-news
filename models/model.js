@@ -48,7 +48,7 @@ exports.fetchArticleWithUpdatedVotes = (id, obj) => {
   });
 };
 
-exports.fetchArticlesSortedByDate = (order) => {
+exports.fetchArticlesSortedByDate = () => {
   let queryStr =
     "SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
 
@@ -56,14 +56,9 @@ exports.fetchArticlesSortedByDate = (order) => {
     return article.rows;
   });
 };
+
 exports.insertComment = (id, newComment) => {
   const { username, body } = newComment;
-  if (!username || !body) {
-    return Promise.reject({
-      status: 400,
-      msg: "Missing required fields",
-    });
-  }
 
   queryStr =
     "INSERT INTO comments (author, body, article_id) VALUES ($1,$2,$3) RETURNING *;";
