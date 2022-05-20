@@ -27,6 +27,10 @@ const {
 const app = express();
 app.use(express.json());
 
+app.get("/api", (req, res, next) => {
+  res.send({ msg: "api up and running" });
+});
+
 //TOPICS
 //get
 app.get("/api/topics", getTopics);
