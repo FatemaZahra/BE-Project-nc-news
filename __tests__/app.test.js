@@ -250,13 +250,14 @@ describe("GET /api/articles", () => {
         expect(body).toEqual({ msg: "Invalid data" });
       });
   });
-  test("200: Returns an array of article objects filtered  by the topic value specified in the query", () => {
+  test("200: Returns an array of article objects filtered by the topic value specified in the query", () => {
     const givenTopic = "cats";
     return request(app)
       .get(`/api/articles?topic=${givenTopic}`)
       .expect(200)
       .then(({ body }) => {
         const { articles } = body;
+
         expect(articles).toBeInstanceOf(Array);
         const articleOnTopic = articles.every(
           (article) => article.topic == "cats"
@@ -264,13 +265,24 @@ describe("GET /api/articles", () => {
         expect(articleOnTopic).toBe(true);
       });
   });
-  test("404: Returns a bad request when passed an incorrect topic", () => {
+  test("200: Returns an empty array when topic is valid but has no related articles yet", () => {
+    const givenTopic = "paper";
+    return request(app)
+      .get(`/api/articles?topic=${givenTopic}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles.length).toBe(0);
+      });
+  });
+  test("404: Returns a bad request when passed an invalid topic", () => {
     const givenTopic = "hellloooo";
     return request(app)
       .get(`/api/articles?topic=${givenTopic}`)
       .expect(404)
       .then(({ body }) => {
-        expect(body).toEqual({ msg: "Not found" });
+        expect(body).toEqual({ msg: "Topic not found" });
       });
   });
   test("200: Returns an array of objects filtered by topic in sorted by title in ascending order", () => {

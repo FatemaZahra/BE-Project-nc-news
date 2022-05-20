@@ -41,6 +41,18 @@ exports.fetchArticleWithUpdatedVotes = (id, obj) => {
   });
 };
 
+exports.checkTopicExists = (topic) => {
+  const queryStr = "SELECT * FROM topics WHERE slug = $1;";
+  return db.query(queryStr, [topic]).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: "Topic not found",
+      });
+    }
+    return result.rows[0];
+  });
+};
 exports.fetchArticles = (sort_by = "created_at", order = "DESC", topic) => {
   const sortByArray = [
     "article_id",
@@ -72,12 +84,6 @@ exports.fetchArticles = (sort_by = "created_at", order = "DESC", topic) => {
     return Promise.reject({ status: 400, msg: "Invalid data" });
   }
   return db.query(queryStr).then((article) => {
-    if (article.rows.length === 0) {
-      return Promise.reject({
-        status: 404,
-        msg: "Not found",
-      });
-    }
     return article.rows;
   });
 };

@@ -2,6 +2,7 @@ const {
   fetchOneArticle,
   fetchArticleWithUpdatedVotes,
   fetchArticles,
+  checkTopicExists,
 } = require("../models/model.js");
 
 exports.getOneArticle = (req, res, next) => {
@@ -27,9 +28,20 @@ exports.getArticles = (req, res, next) => {
   const { sort_by } = req.query;
   const { order } = req.query;
   const { topic } = req.query;
-  fetchArticles(sort_by, order, topic)
-    .then((articles) => {
-      res.status(200).send({ articles });
-    })
-    .catch(next);
+  if (topic) {
+    checkTopicExists(topic)
+      .then(() => {
+        return fetchArticles(sort_by, order, topic);
+      })
+      .then((articles) => {
+        res.status(200).send({ articles });
+      })
+      .catch(next);
+  } else {
+    fetchArticles(sort_by, order)
+      .then((articles) => {
+        res.status(200).send({ articles });
+      })
+      .catch(next);
+  }
 };
