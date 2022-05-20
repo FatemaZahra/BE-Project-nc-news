@@ -361,3 +361,29 @@ describe("POST /api/articles/:article_id/comments", () => {
       });
   });
 });
+
+describe("DELETE /api/comments/:comment_id", () => {
+  test("204:Deletes the given comment by mentioned comment id", () => {
+    const comment_id = 2;
+    return request(app).delete(`/api/comments/${comment_id}`).expect(204);
+  });
+  test("400: End-point with invalid data type", () => {
+    return request(app)
+      .delete(`/api/comments/iAmAComment`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Bad Request" });
+      });
+  });
+  test("404: Not-found, ID doesn't exist", () => {
+    const comment_id = 9999999;
+    return request(app)
+      .delete(`/api/comments/${comment_id}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({
+          msg: `Comment ID:${comment_id} doesn't exist`,
+        });
+      });
+  });
+});
