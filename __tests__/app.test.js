@@ -276,7 +276,7 @@ describe("GET /api/articles", () => {
         expect(articles.length).toBe(0);
       });
   });
-  test("404: Returns a bad request when passed an invalid topic", () => {
+  test("404: Returns topic not found when passed an invalid topic", () => {
     const givenTopic = "hellloooo";
     return request(app)
       .get(`/api/articles?topic=${givenTopic}`)
