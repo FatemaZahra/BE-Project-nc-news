@@ -208,6 +208,97 @@ describe("GET /api/articles", () => {
         });
       });
   });
+  test("200:Returns an array of article objects sorted by any valid column", () => {
+    const toSortBy = "comment_count";
+    return request(app)
+      .get(`/api/articles?sort_by=${toSortBy}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toBeSorted("comment_count", {
+          descending: true,
+        });
+      });
+  });
+  test("400: Returns a bad request when passed an invalid column to sort_by", () => {
+    const toSortBy = 1;
+    return request(app)
+      .get(`/api/articles?sort_by=${toSortBy}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid data" });
+      });
+  });
+  test("200: Returns an array of article objects sorted in ascending or descending order", () => {
+    const orderBy = "ASC";
+    return request(app)
+      .get(`/api/articles?order=${orderBy}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles).toBeSorted({ key: "created_at" });
+      });
+  });
+  test("400: Returns a bad request when passed any value except asc or desc", () => {
+    const orderBy = 1;
+    return request(app)
+      .get(`/api/articles?order=${orderBy}`)
+      .expect(400)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Invalid data" });
+      });
+  });
+  test("200: Returns an array of article objects filtered by the topic value specified in the query", () => {
+    const givenTopic = "cats";
+    return request(app)
+      .get(`/api/articles?topic=${givenTopic}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+
+        expect(articles).toBeInstanceOf(Array);
+        const articleOnTopic = articles.every(
+          (article) => article.topic == "cats"
+        );
+        expect(articleOnTopic).toBe(true);
+      });
+  });
+  test("200: Returns an empty array when topic is valid but has no related articles yet", () => {
+    const givenTopic = "paper";
+    return request(app)
+      .get(`/api/articles?topic=${givenTopic}`)
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        expect(articles.length).toBe(0);
+      });
+  });
+  test("404: Returns a bad request when passed an invalid topic", () => {
+    const givenTopic = "hellloooo";
+    return request(app)
+      .get(`/api/articles?topic=${givenTopic}`)
+      .expect(404)
+      .then(({ body }) => {
+        expect(body).toEqual({ msg: "Topic not found" });
+      });
+  });
+  test("200: Returns an array of objects filtered by topic in sorted by title in ascending order", () => {
+    return request(app)
+      .get("/api/articles?sort_by=title&order=ASC&topic=mitch")
+      .expect(200)
+      .then(({ body }) => {
+        const { articles } = body;
+        expect(articles).toBeInstanceOf(Array);
+        const articleOnTopic = articles.every(
+          (article) => article.topic == "mitch"
+        );
+        expect(articleOnTopic).toBe(true);
+        expect(articles).toBeSorted({ key: "title" });
+      });
+  });
   test("404: Path not found", () => {
     return request(app)
       .get("/api/something")

@@ -41,10 +41,48 @@ exports.fetchArticleWithUpdatedVotes = (id, obj) => {
   });
 };
 
-exports.fetchArticlesSortedByDate = () => {
+exports.checkTopicExists = (topic) => {
+  const queryStr = "SELECT * FROM topics WHERE slug = $1;";
+  return db.query(queryStr, [topic]).then((result) => {
+    if (result.rows.length === 0) {
+      return Promise.reject({
+        status: 404,
+        msg: "Topic not found",
+      });
+    }
+    return result.rows[0];
+  });
+};
+exports.fetchArticles = (sort_by = "created_at", order = "DESC", topic) => {
+  const sortByArray = [
+    "article_id",
+    "title",
+    "topic",
+    "author",
+    "body",
+    "created_at",
+    "votes",
+    "comment_count",
+  ];
+  const orderArray = ["ASC", "DESC"];
   let queryStr =
-    "SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id GROUP BY articles.article_id ORDER BY articles.created_at DESC;";
+    "SELECT articles.*, COUNT(comments.comment_id)::INT AS comment_count FROM articles LEFT JOIN comments ON articles.article_id=comments.article_id";
 
+  if (topic) {
+    queryStr += ` WHERE articles.topic = '${topic}'`;
+  }
+
+  queryStr += ` GROUP BY articles.article_id`;
+  if (sortByArray.includes(sort_by) && orderArray.includes(order)) {
+    if (sort_by === "comment_count") {
+      queryStr += ` ORDER BY comment_count ${order};`;
+    } else {
+      queryStr += ` ORDER BY articles.${sort_by} ${order};`;
+    }
+  }
+  if (!sortByArray.includes(sort_by) || !orderArray.includes(order)) {
+    return Promise.reject({ status: 400, msg: "Invalid data" });
+  }
   return db.query(queryStr).then((article) => {
     return article.rows;
   });
