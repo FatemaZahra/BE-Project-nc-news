@@ -11,7 +11,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order"],
+    "queries": ["sort_by", "order", "topic"],
     "exampleResponse": {
       "articles": [
         {
@@ -19,7 +19,7 @@
           "topic": "cooking",
           "author": "weegembump",
           "body": "Text from the article..",
-          "created_at": 1527695953341,
+          "created_at": "2020-08-03T13:14:00.000Z",
           "votes": 0
         }
       ]
@@ -35,7 +35,7 @@
           "topic": "mitch",
           "author": "icellusedkars",
           "body": "Call me Mitchell. Some years....",
-          "created_at": 1602828180000,
+          "created_at": "2020-08-03T13:14:00.000Z",
           "votes": 0
         }
       ]
@@ -44,6 +44,7 @@
   "PATCH /api/articles/:article_id": {
     "description": "Serves an array of one article object updated with increase or decrease in vote count",
     "queries": [],
+    "exampleRequest": { "inc_votes": 1000 },
     "exampleResponse": {
       "article": [
         {
@@ -51,7 +52,7 @@
           "topic": "mitch",
           "author": "icellusedkars",
           "body": "Call me Mitchell. Some....",
-          "created_at": 1602828180000,
+          "created_at": "2020-10-16T05:03:00.000Z",
           "votes": 1000
         }
       ]
@@ -80,7 +81,7 @@
           "votes": 1,
           "author": "butter_bridge",
           "article_id": 5,
-          "created_at": 1606176480000
+          "created_at": "2022-01-16T05:03:00.000Z"
         }
       ]
     }
@@ -88,6 +89,10 @@
   "POST /api/articles/:article_id/comments": {
     "description": "Serves an array of new comment object posted for the given article ID",
     "queries": [],
+    "exampleRequest": {
+      "username": "butter_bridge",
+      "body": "That's a nice article."
+    },
     "exampleResponse": {
       "comments": [
         {
