@@ -10,7 +10,7 @@
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all topics",
+    "description": "serves an array of all articles",
     "queries": ["author", "topic", "sort_by", "order"],
     "exampleResponse": {
       "articles": [
@@ -19,9 +19,89 @@
           "topic": "cooking",
           "author": "weegembump",
           "body": "Text from the article..",
-          "created_at": 1527695953341
+          "created_at": 1527695953341,
+          "votes": 0
         }
       ]
     }
+  },
+  "GET /api/articles/:article_id": {
+    "description": "Serves an array of one article object",
+    "queries": [],
+    "exampleResponse": {
+      "article": [
+        {
+          "title": "Sony Vaio; or, The Laptop",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "body": "Call me Mitchell. Some years....",
+          "created_at": 1602828180000,
+          "votes": 0
+        }
+      ]
+    }
+  },
+  "PATCH /api/articles/:article_id": {
+    "description": "Serves an array of one article object updated with increase or decrease in vote count",
+    "queries": [],
+    "exampleResponse": {
+      "article": [
+        {
+          "title": "Sony Vaio; or, The Laptop",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "body": "Call me Mitchell. Some....",
+          "created_at": 1602828180000,
+          "votes": 1000
+        }
+      ]
+    }
+  },
+  "GET /api/users": {
+    "description": "serves an array of all users",
+    "queries": [],
+    "exampleResponse": {
+      "users": [
+        {
+          "username": "butter_bridge",
+          "name": "jonny",
+          "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+        }
+      ]
+    }
+  },
+  "GET /api/articles/:article_id/comments": {
+    "description": "Serves an array of comments for the given article ID",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "body": "I am 100% sure that we're not completely sure.",
+          "votes": 1,
+          "author": "butter_bridge",
+          "article_id": 5,
+          "created_at": 1606176480000
+        }
+      ]
+    }
+  },
+  "POST /api/articles/:article_id/comments": {
+    "description": "Serves an array of new comment object posted for the given article ID",
+    "queries": [],
+    "exampleResponse": {
+      "comments": [
+        {
+          "comment_id": 20,
+          "body": "That's a nice article.",
+          "votes": 1,
+          "author": "butter_bridge",
+          "article_id": 5,
+          "created_at": 1606176480000
+        }
+      ]
+    }
+  },
+  "DELETE /api/comments/:comment_id": {
+    "description": "Deletes the comment for the given ID"
   }
 }
