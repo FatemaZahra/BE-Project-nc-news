@@ -27,8 +27,9 @@ const {
 const app = express();
 app.use(express.json());
 
+const endpoints = require("./endpoints.json");
 app.get("/api", (req, res, next) => {
-  res.send({ msg: "api up and running" });
+  res.status(200).send(endpoints);
 });
 
 //TOPICS
